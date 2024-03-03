@@ -11,7 +11,7 @@ const Admin2 = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const stdListResponse = await fetch(`${url}/studentList`);
+                const stdListResponse = await fetch(`${url}/student/studentList`);
                 const stdList = await stdListResponse.json();
                 console.log(stdList);
 

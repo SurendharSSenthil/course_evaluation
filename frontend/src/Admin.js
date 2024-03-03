@@ -14,7 +14,7 @@ const Admin = () => {
 
     const fetchCourseMark = async (coursecode, category) => {
         try {
-            const response = await fetch(`${url}/dashboard`, {
+            const response = await fetch(`${url}/admin/dashboard`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
@@ -36,7 +36,7 @@ const Admin = () => {
 
     const fetchStdCount = async (coursecode) => {
         try {
-            const response = await fetch(`${url}/students/${coursecode}`);
+            const response = await fetch(`${url}/admin/${coursecode}`);
             const data = await response.json();
             return data; 
         } catch (err) {

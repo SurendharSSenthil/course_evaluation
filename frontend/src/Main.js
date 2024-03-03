@@ -140,7 +140,7 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
       return;
     }
     else{
-    fetch(`${url}/submit-form`, {
+    fetch(`${url}/student/submit-form`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
