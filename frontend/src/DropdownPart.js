@@ -25,6 +25,7 @@ const DropdownPart = ({ courseName, setCourseName, courses,setCourseId }) => {
               onChange={handleOptionChange}
               required
             >
+              <option value="">--Select--</option>
               {Object.entries(courses).map(([courseCode, coursename]) => (
                 <option key={courseCode} value={courseCode}>{coursename}</option>
               ))}

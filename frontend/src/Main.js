@@ -7,6 +7,7 @@ import Sem from "./Sem";
 import Student from "./Student";
 import DropdownPart from "./DropdownPart";
 import {url} from './url';
+import { notification } from 'antd';
 
 
 function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdName}) {
@@ -21,7 +22,8 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
   const [duplicate, setDuplicate] = useState(false);
   const [ret,setRet] = useState(false);
   const [courses,setCourses] = useState([]);
-
+  const [table, setTable] = useState(false);
+  const [flag,setFlag] = useState('');
  
 
   const questions = [
@@ -105,7 +107,10 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
               setEmail(studentData.email);
               setPhNo(studentData.phNo);
               setCourses(studentData.courselist);
+              setSem(studentData.sem);
+              setYear(studentData.year);
               setRet(true);
+              setFlag(studentData.sem);
               console.log(stdName);
             }
           }
@@ -136,7 +141,10 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!courseName || !email || !phNo || responses.length !== questions.length) {
-      alert("Please fill out all required fields and answer all questions.");
+      notification.warning({
+        message: "Incomplete Data",
+        description: "Please fill out all the fields"
+      })
       return;
     }
     else{
@@ -249,12 +257,12 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
                 </div>
 
                 <div className='semOption'>
-                  <Sem sem={sem} setSem={setSem} year={year} setYear={setYear} />
+                <Sem sem={sem} setSem={setSem} year={year} setYear={setYear} setTable={setTable} flag={flag}/>
                 </div>
-                {sem === 'V' && <DropdownPart courseName={courseName} courses={courses} setCourseName={setCourseName}  setCourseId={setCourseId} />}
+                {flag === sem && <DropdownPart courseName={courseName} setCourseName={setCourseName} courses={courses} courseId={courseId} setCourseId={setCourseId} setTable={setTable}/>}
 
 
-                <table className='table table-bordered table-striped'>
+                {table && <table className='table table-bordered table-striped'>
                   <thead>
                     <tr>
                       <th>Evaluation Question</th>
@@ -274,7 +282,7 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
                           <td key={option} id="center">
                             <input
                               type='radio'
-                              name={`quest ion_${question.qid}`}
+                              name={`question_${question.qid}`}
                               value={option}
                               checked={responses.find((response) => response.qid === question.qid)?.response === option}
                               onChange={() => handleOptionChange(question.qid, question.question, option)}
@@ -286,7 +294,7 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table>}
                 <div className="d-flex">
                 <button type='submit' onClick={(e) => {handleSubmit(e)}}>Submit</button>
                 </div>

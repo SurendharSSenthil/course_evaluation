@@ -57,7 +57,8 @@ const submitForm = async(req,res) => {
 }
 
 const getStudentList = async(req,res) => {
-    const stdList = await StudentIDModel.find();
+    console.log(req.params.sem);
+    const stdList = await StudentModel.find({sem: req.params.sem});
     console.log(stdList);
     res.json(stdList);
 }
