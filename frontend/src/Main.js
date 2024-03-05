@@ -22,7 +22,7 @@ function Main({regNo, setRegNo, dob, setDob, isAuth, setIsAuth, stdName, setStdN
   const [duplicate, setDuplicate] = useState(false);
   const [ret,setRet] = useState(false);
   const [courses,setCourses] = useState([]);
-  const [table, setTable] = useState(false);
+  const [table, setTable] = useState(true);
   const [flag,setFlag] = useState('');
  
 

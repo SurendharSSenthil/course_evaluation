@@ -11,70 +11,81 @@ const getCourses = async(req,res) => {
   }
 }
 
-const getDashboardData = async(req,res) => {
-    const reqData = req.body;
+const getDashboardData = async (req, res) => {
+  const courseList = req.body.courseList;
+  const categories = { 1: "Planning and organization", 2: "Presentation and Communication", 3: "Student participation", 4: "Class Management" };
 
   try {
-    let categoryScale;
+    let results = [];
 
-    if (reqData.category === "Planning and organization") {
-      categoryScale = 1;
-    } else if (reqData.category === "Presentation and Communication") {
-      categoryScale = 2;
-    } else if (reqData.category === "Student participation") {
-      categoryScale = 3;
-    } else if (reqData.category === "Class Management") {
-      categoryScale = 4;
-    } else {
-      return res.status(400).json({ error: 'Invalid category' });
-    }
+    for (const course of courseList) {
+      const courseData = {
+        courseCode: course.coursecode,
+        courseName: course.coursename,
+        categories: []
+      };
 
-    const lowerBound = (categoryScale - 1) * 5 + 1;
-    const upperBound = categoryScale * 5;
+      for (const [categoryScale, categoryName] of Object.entries(categories)) {
+        let categoryFlag = Number(categoryScale); // Convert to number
+        const lowerBound = (categoryFlag - 1) * 5 + 1;
+        const upperBound = categoryFlag * 5;
 
-    const aggregationPipeline = [
-      { $unwind: "$responses" },
-      {
-        $match: {
-          "courseName": reqData.coursecode,
-          "responses.qid": { $gte: lowerBound, $lte: upperBound }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalScore: {
-            $sum: {
-              $switch: {
-                branches: [
-                  { case: { $eq: ["$responses.response", "Excellent"] }, then: 5 },
-                  { case: { $eq: ["$responses.response", "Very Good"] }, then: 4 },
-                  { case: { $eq: ["$responses.response", "Good"] }, then: 3 },
-                  { case: { $eq: ["$responses.response", "Fair"] }, then: 2 },
-                  { case: { $eq: ["$responses.response", "Satisfactory"] }, then: 1 },
-                ],
-                default: 0
-              }
+        const aggregationPipeline = [
+          { $match: { "courseName": course.coursecode, "responses.qid": { $gte: lowerBound, $lte: upperBound } } },
+          { $unwind: "$responses" },
+          { $match: { "responses.qid": { $gte: lowerBound, $lte: upperBound } } },
+          {
+            $group: {
+              _id: null,
+              totalScore: {
+                $sum: {
+                  $switch: {
+                    branches: [
+                      { case: { $eq: ["$responses.response", "Excellent"] }, then: 5 },
+                      { case: { $eq: ["$responses.response", "Very Good"] }, then: 4 },
+                      { case: { $eq: ["$responses.response", "Good"] }, then: 3 },
+                      { case: { $eq: ["$responses.response", "Fair"] }, then: 2 },
+                      { case: { $eq: ["$responses.response", "Satisfactory"] }, then: 1 },
+                    ],
+                    default: 0
+                  }
+                }
+              },
+              totalStudents: { $sum: 1 }
             }
           }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          totalScore: 1
-        }
-      }
-    ];
+        ];
 
-    const result = await responseModel.aggregate(aggregationPipeline);
-    console.log(result);
-    res.json(result);
+        const result = await responseModel.aggregate(aggregationPipeline);
+        courseData.categories.push({
+          category: categoryName,
+          totalScore: result.length > 0 ? result[0].totalScore : 0,
+          totalStudents: result.length > 0 ? result[0].totalStudents : 0
+        });
+      }
+
+      results.push(courseData);
+    }
+
+    const totalStudentsPerCourse = await Promise.all(courseList.map(async course => {
+      const totalStudentsQuery = await responseModel.countDocuments({ "courseName": course.coursecode });
+      return { courseCode: course.coursecode, totalStudents: totalStudentsQuery };
+    }));
+
+    results = results.map(courseData => {
+      const totalStudentsForCourse = totalStudentsPerCourse.find(item => item.courseCode === courseData.courseCode);
+      courseData.totalStudents = totalStudentsForCourse ? totalStudentsForCourse.totalStudents : 0;
+      return courseData;
+    });
+
+    console.log("Final result ", results);
+    res.json(results);
   } catch (err) {
     console.error('Error in aggregation:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
 
 const getResponseData = async(req,res) => {
     const { studentId, courseCode } = req.body;

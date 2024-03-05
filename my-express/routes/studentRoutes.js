@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { submitForm,
         getStudentList,
-        getStudentById,
+        getCourseCounts,
         getStudentData,
-        getCourseCount  } = require('../controllers/studentController');
+        getStudentDataAtMain  } = require('../controllers/studentController');
 
-        router.get('/admin/:std', getCourseCount);
-        router.get('/studentList/:sem', getStudentList);
-        router.get('/:id', getStudentById);
+router.post('/admin/courseCounts', getCourseCounts);
+router.get('/studentList/:sem', getStudentList);
+router.get('/:id', getStudentDataAtMain);
 router.post('/studentID', getStudentData);
 router.post('/submit-form', submitForm);
 

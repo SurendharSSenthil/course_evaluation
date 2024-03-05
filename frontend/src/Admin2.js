@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import './Main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { url } from './url';
@@ -10,38 +10,45 @@ const Admin2 = () => {
     
     const fetchData = async (e) => {
         setLoading(true);
-            try {
-                const stdListResponse = await fetch(`${url}/student/studentList/${e.target.value}`);
-                const stdList = await stdListResponse.json();
-                if(!(stdList.length > 0)){
-                    setLoading(false);
-                    setStd([]);
-                    notification.info({
-                        message: 'No response Found',
-                        description: `No students in sem ${e.target.value}`,
-                    });
-                }
-                else{
-                const studentsWithCourses = await Promise.all(
-                    stdList.map(async (student) => {
-                        const res = await fetch(`${url}/student/admin/${student.stdId}`);
-                        const courses = await res.json();
-                        console.log(courses);
-
-                        return {
-                            RegNo: student.stdId,
-                            Name: student.stdName,
-                            CoursesSubmitted: courses
-                        };
-                    })
-                );
-
+        try {
+            const stdListResponse = await fetch(`${url}/student/studentList/${e.target.value}`);
+            const stdList = await stdListResponse.json();
+            console.log(stdList);
+            if (!(stdList.length > 0)) {
+                setLoading(false);
+                setStd([]);
+                notification.info({
+                    message: 'No response Found',
+                    description: `No students in sem ${e.target.value}`,
+                });
+            } else {
+                const studentIds = stdList.map(student => student.stdId);
+                console.log(studentIds);
+                const courseCountsResponse = await fetch(`${url}/student/admin/courseCounts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ students: studentIds })
+                });
+                const courseCounts = await courseCountsResponse.json();
+                console.log(courseCounts);
+                const studentsWithCourses = stdList.map(student => {
+                    const count = courseCounts.find(count => count.studentId === student.stdId).count;
+                    return {
+                        RegNo: student.stdId,
+                        Name: student.stdName,
+                        CoursesSubmitted: count
+                    };
+                });
                 setStd(studentsWithCourses);
-                setLoading(false);}
-            } catch (error) {
-                console.error("Error fetching data:", error);
+                setLoading(false);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    
 
     const columns = [
         {

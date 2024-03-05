@@ -1,5 +1,6 @@
 const StudentIDModel = require('../models/nameListModel');
 const responseModel = require('../models/responseModel');
+const studentModel = require('../models/studentModel');
 const StudentModel = require('../models/studentModel');
 
 const getStudentData = async(req,res) => {
@@ -58,36 +59,35 @@ const submitForm = async(req,res) => {
 
 const getStudentList = async(req,res) => {
     console.log(req.params.sem);
-    const stdList = await StudentModel.find({sem: req.params.sem});
+    const stdList = await StudentModel.find({sem:req.params.sem})
     console.log(stdList);
     res.json(stdList);
 }
 
-const getStudentById = async(req,res) => {
-    const studentId = req.params.id;
-    console.log(studentId);
-    try {
-      const studentData = await StudentModel.findOne({ stdId: studentId });
-      console.log(studentData);
-      if (studentData) {
-        res.json(studentData);
-      }
-      else {
-        res.json("Student Not Found");
-      }
-    } catch (error) {
-      console.error('Error retrieving student data:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
+const getCourseCounts = async (req, res) => {
+  const students = req.body.students;
+  console.log(req.body.students);
+  try {
+      const counts = await Promise.all(
+          students.map(async (student) => {
+              const count = await responseModel.countDocuments({ stdId: student });
+              return { studentId: student, count };
+          })
+      );
+      res.json(counts);
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
-const getCourseCount = async(req,res) => {
-    const student = req.params.std;
-    console.log(student);
+
+const getStudentDataAtMain = async(req,res) => {
+    const student = req.params.id;
     try{
-      const resCount = await responseModel.countDocuments({stdId: student});
-      console.log(resCount);
-      res.json(resCount);
+      const resCount = await studentModel.find({stdId: student});
+      console.log(resCount[0]);
+      res.json(resCount[0]);
     }catch(err){
       console.log(err);
     }
@@ -96,7 +96,7 @@ const getCourseCount = async(req,res) => {
 module.exports = {
     submitForm,
     getStudentList,
-    getStudentById,
+    getCourseCounts,
     getStudentData,
-    getCourseCount
+    getStudentDataAtMain
 }

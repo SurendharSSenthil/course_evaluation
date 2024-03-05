@@ -8,105 +8,62 @@ const Admin = () => {
     const categories = ["Planning and organization", "Presentation and Communication", "Student participation", "Class Management"];
 
     const [loading, setLoading] = useState(true);
-    const [marks, setMarks] = useState({});
-    const [no, setNo] = useState({});
-    const [courses, setCourses] = useState([]);
-
-    const fetchCourseMark = async (coursecode, category) => {
-        try {
-            const response = await fetch(`${url}/admin/dashboard`, {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                },
-                body: JSON.stringify({ coursecode, category }),
-            });
-            const data = await response.json();
-
-            if (data && data.length > 0) {
-                return data[0].totalScore;
-            } else {
-                return 0;
-            }
-        } catch (err) {
-            console.error(err);
-            return 0;
-        }
-    };
-
-    const fetchStdCount = async (coursecode) => {
-        try {
-            const response = await fetch(`${url}/admin/${coursecode}`);
-            const data = await response.json();
-            return data; 
-        } catch (err) {
-            console.error(err);
-            return 0;
-        }
-    };
-
-    useEffect(() => {
-        const fetchCourseData = async () => {
-            try {
-                const res = await fetch(`${url}/admin/courses`);
-                if (!res.ok) {
-                    throw new Error('Failed to fetch courses');
-                }
-                const data = await res.json();
-                console.log(data);
-                setCourses(data);
-            } catch (error) {
-                console.error('Error fetching courses:', error);
-            }
-        };
-        fetchCourseData();
-    }, []);
+    const [data, setData] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            const marksData = {};
-            const stdCountData = {};
-            for (const course of courses) {
-                stdCountData[course.coursecode] = await fetchStdCount(course.coursecode);
-                for (const category of categories) {
-                    const key = `${course.coursecode}-${category}`;
-                    marksData[key] = await fetchCourseMark(course.coursecode, category);
+            try {
+                const courseListResponse = await fetch(`${url}/admin/courses`);
+                if (!courseListResponse.ok) {
+                    throw new Error('Failed to fetch course list');
                 }
+                const courseList = await courseListResponse.json();
+
+                const dashboardDataResponse = await fetch(`${url}/admin/dashboard`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ courseList: courseList })
+                });
+                if (!dashboardDataResponse.ok) {
+                    throw new Error('Failed to fetch dashboard data');
+                }
+                const dashboardData = await dashboardDataResponse.json();
+                console.log(dashboardData);
+                const modifiedData = dashboardData.map(course => {
+                    const totalScore = categories.reduce((acc, category) => acc + course.categories.find(cat => cat.category === category).totalScore, 0);
+                    const avg = course.totalStudents !== 0 ? Math.round(totalScore / course.totalStudents) : 0;
+
+                    return { ...course, totalScore, avg };
+                });
+
+                setData(modifiedData);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setLoading(false);
             }
-            console.log(marksData);
-            console.log(stdCountData);
-            setMarks(marksData);
-            setNo(stdCountData);
-            setLoading(false);
         };
-
         fetchData();
-    }, [courses]);
-
-    const totRes = (coursecode) => {
-        let tot = 0;
-        for (const category of categories) {
-            const key = `${coursecode}-${category}`;
-            tot += marks[key] || 0; // Ensure to handle undefined marks
-        }
-        return tot;
-    };
-
-    const average = (coursecode) => {
-        if (!no[coursecode] || isNaN(no[coursecode])) return 0; // Handle cases where no data is available or data is not a number
-        return Math.round(totRes(coursecode) / no[coursecode]);
-    };
+    }, []);
 
     const columns = [
         {
             title: 'Course Code',
-            dataIndex: 'coursecode',
-            key: 'coursecode',
+            dataIndex: 'courseCode',
+            key: 'courseCode',
+        },
+        {
+            title: 'Course Name',
+            dataIndex: 'courseName',
+            key: 'courseName',
         },
         ...categories.map(category => ({
             title: category,
-            dataIndex: category,
-            key: category,
+            dataIndex: category.toLowerCase().replace(/\s+/g, '_'), // Convert spaces to underscores and make lowercase
+            key: category.toLowerCase().replace(/\s+/g, '_'), // Convert spaces to underscores and make lowercase
+            render: (text, record) => record.categories.find(cat => cat.category === category).totalScore // Render the totalScore for each category
         })),
         {
             title: 'Total Students',
@@ -115,24 +72,15 @@ const Admin = () => {
         },
         {
             title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
+            dataIndex: 'totalScore',
+            key: 'totalScore',
         },
         {
             title: 'Average',
-            dataIndex: 'overallAvg',
-            key: 'overallAvg',
-        },
+            dataIndex: 'avg',
+            key: 'avg',
+        }
     ];
-
-    const data = courses.map(course => ({
-        key: course.coursecode,
-        coursecode: course.coursename, // Assuming the property is courseName, change it accordingly if it's different
-        totalStudents: no[course.coursecode],
-        total: totRes(course.coursecode),
-        overallAvg: average(course.coursecode),
-        ...Object.fromEntries(categories.map(category => [category, marks[`${course.coursecode}-${category}`]]))
-    }));
 
     return (
         <>
