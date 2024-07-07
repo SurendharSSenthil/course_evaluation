@@ -1,85 +1,128 @@
-#category-average{
-    color: rgb(0, 21, 255);
+body {
+	background-color: whitesmoke;
 }
 
-#overall-average{
-    color: rgb(255, 0, 0);
-    text-align: center;
+.root-div {
+	width: 100%;
+	overflow-x: auto;
+}
+#category-average {
+	color: rgb(0, 21, 255);
 }
 
-h3{
-    text-align: center;
-    color: rgb(93, 42, 165);
-    margin: 20px;
+#overall-average {
+	color: rgb(255, 0, 0);
+	text-align: center;
 }
 
-.table{
-    margin-top: 0;
+h3 {
+	text-align: center;
+	color: rgb(93, 42, 165);
+	margin: 20px;
 }
 
-#spin{
-    padding: 20px;
-    text-align: center;
+.table {
+	margin-top: 0;
 }
 
-#footer{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+#spin {
+	padding: 20px;
+	text-align: center;
 }
 
-#designation{
-    font-size: 20px;
-    font-weight: 700;
-    padding: 10px;
+#footer {
+	margin-top: 50px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
 }
 
-#studentId{
-    width: 30%;
-    padding: 10px;
+#designation {
+	font-size: 20px;
+	font-weight: 700;
+	padding: 10px;
 }
 
-label{
-    font-size: 20px;
-    font-weight: 600;
+#studentId {
+	width: 30%;
+	padding: 10px;
 }
 
-.courseCode{
-    width: 500px;
-    margin: 20px;
+label {
+	font-size: 20px;
+	font-weight: 600;
+	margin-right: 10px;
 }
 
-#admin-form{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
+#courseCode {
+	min-width: 500px;
 }
 
-#stdData{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+#admin-form {
+	background-color: white;
+	padding: 15px;
+	margin: 10px;
+	/* border-radius: 10px; */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	gap: 10px;
 }
 
-#stdData__span{
-    font-size: 1.1rem;
-    font-weight: 600;
+#stdData {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
 }
 
-#responses{
-    padding: 15px;
+#stdData__span {
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+#responses {
+	padding: 15px;
+}
+
+.input {
+	min-width: 300px;
 }
 
 @media only screen and (max-width: 600px) {
-    .courseCode{
-        width: 75%;
-        margin: 20px;
-    }
-    #admin-form{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
+	.courseCode {
+		width: 75%;
+		margin: 20px;
+	}
+	#admin-form {
+		background-color: white;
+		padding: 15px;
+		margin: 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: start;
+		/* justify-items: stretch; */
+	}
+	#designation {
+		font-size: 16px;
+	}
+	label {
+		font-size: 16px;
+		font-weight: 400;
+	}
+	input {
+		font-size: 14px;
+	}
+	#stdData {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		align-items: start;
+	}
+
+	#stdData__span {
+		font-size: 1rem;
+		font-weight: 600;
+	}
 }
