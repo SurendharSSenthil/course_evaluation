@@ -273,7 +273,7 @@ function Main({
 				</Button>
 			</div>
 			{updated ? (
-				<div className="submitted">
+				<div className="submitted" style={{ marginTop: "100px" }}>
 					<FontAwesomeIcon icon={faCheckCircle} beatFade size="lg" />
 					<div>Form Successfully Submitted</div>
 					<button onClick={(e) => ReturnBtn(e)}>

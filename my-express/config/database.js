@@ -6,7 +6,7 @@ const connectDB = async () => {
 		await mongoose.connect(process.env.MONGODB_CONNECTION_STRING, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
-			dbName: "StudentDB",
+			dbName: "course_evaluation-IV-sem",
 		});
 		console.log(`MongoDB Connected ${process.env.MONGODB_CONNECTION_STRING}`);
 	} catch (error) {
