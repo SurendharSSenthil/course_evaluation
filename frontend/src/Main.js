@@ -204,10 +204,7 @@ function Main({
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		if (
-			!courseName ||
-			!email ||
-			!phNo ||
-			responses.length !== questions.length
+			!courseName || responses.length !== questions.length
 		) {
 			notification.warning({
 				message: "Incomplete Data",
