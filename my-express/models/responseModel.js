@@ -17,11 +17,10 @@ const studentSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
   },
   phNo: {
+    
     type: String,
-    required: true,
   },
   courseName: {
     type: String,
