@@ -17,8 +17,23 @@ body {
 .header h1 {
 	margin: 0;
 	font-size: 24px;
+	font-family: sans-serif;
+	font-weight: bold;
 }
 
+.header h2{
+	margin: 0;
+	font-size: 24px;
+	font-family: sans-serif;
+	font-weight: 700;
+}
+
+
+.small{
+	display: none;
+	color: #007bff;
+	font-size: 24px !important;
+}
 .logOut {
 	background-color: #007bff;
 	color: white;
@@ -200,6 +215,7 @@ button:hover {
 	margin: 20px;
 }
 
+
 @keyframes pulseColorChange {
 	0%,
 	100% {
@@ -222,7 +238,6 @@ button:hover {
 	.form-group input {
 		width: calc(100% - 20px);
 	}
-
 	table {
 		overflow-x: auto;
 		background-color: #fff;
@@ -253,5 +268,12 @@ button:hover {
 	}
 	.divLabel {
 		font-size: 16px;
+	}
+	.topic{
+		display: none !important;
+	}
+	
+	.small{
+		display: block;
 	}
 }

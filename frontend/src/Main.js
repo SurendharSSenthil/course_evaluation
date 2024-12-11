@@ -264,7 +264,9 @@ function Main({
 	return (
 		<div>
 			<div className="header d-flex justify-content-between align-items-center w-full fixed-top bg-white shadow-sm">
-				<h1 className="topic m-0">Evaluation Form</h1>
+				<h2 className="small">GCT, CBE-13</h2>
+				<h2 className="topic">Department of Computer Science and Engineering, Government College of Technology, CBE-13</h2>
+				{/* <h1 className="topic m-0"></h1> */}
 				<Button type="primary" onClick={handleLogOut} className="logOut">
 					Log Out
 				</Button>

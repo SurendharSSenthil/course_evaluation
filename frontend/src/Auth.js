@@ -47,8 +47,10 @@ const Auth = ({
 
 	return (
 		<div className="main__login__container">
+			<Title className="clg_name">Government College of Technology, Coimbatore-13</Title>
+			<Title className="dept_name">Department of Computer Science and Engineering</Title>
 			<div>
-				<Title className="root-header" level={2}>
+				<Title className="root-header" >
 					Course Feedback
 				</Title>
 
