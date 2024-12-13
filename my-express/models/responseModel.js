@@ -42,6 +42,9 @@ const studentSchema = new mongoose.Schema({
     type: [responseSchema],
     required: true,
   },
+  feedback:{
+    type:String
+  }
 });
 
 module.exports = mongoose.model('IIIyrresponse_feedback', studentSchema);

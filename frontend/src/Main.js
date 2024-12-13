@@ -13,7 +13,7 @@ import Student from "./Student";
 import DropdownPart from "./DropdownPart";
 import { url } from "./url";
 import { notification, Button } from "antd";
-
+import TextArea from "antd/es/input/TextArea";
 function Main({
 	regNo,
 	setRegNo,
@@ -37,7 +37,7 @@ function Main({
 	const [courses, setCourses] = useState([]);
 	const [table, setTable] = useState(true);
 	const [flag, setFlag] = useState("");
-
+	const [fb, setFb] = useState("");
 	const questions = [
 		{
 			qid: 1,
@@ -173,6 +173,7 @@ function Main({
 							setYear(studentData.year);
 							setRet(true);
 							setFlag(studentData.sem);
+							
 							console.log(stdName);
 						}
 					}
@@ -227,6 +228,7 @@ function Main({
 					sem,
 					year,
 					responses,
+					feedback: fb
 				}),
 			})
 				.then((response) => response.json())
@@ -410,6 +412,10 @@ function Main({
 									</tbody>
 								</table>
 							)}
+						</div>
+						<div className="container">
+							<label htmlFor="feedback">Feedback</label>
+							<TextArea id="feedback" placeholder="write your feedback here" onChange={(e) => setFb(e.target.value)}></TextArea>		
 						</div>
 						<div style={{ margin: "15px 20px" }}>
 							<Button

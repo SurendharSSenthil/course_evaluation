@@ -41,6 +41,7 @@ const submitForm = async (req, res) => {
 			sem: formData.sem,
 			year: formData.year,
 			responses: formData.responses,
+			feedback: formData.feedback,
 		});
 		const duplicateEntry = await responseModel.countDocuments({
 			stdId: formData.regNo,
