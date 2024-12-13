@@ -12,6 +12,7 @@ const Admin2 = () => {
 	const [courses, setCourses] = useState([]);
 	const [stdName, setStdName] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [fb, setFb] = useState("");
 
 	useEffect(() => {
 		const fetchCourses = async () => {
@@ -50,6 +51,7 @@ const Admin2 = () => {
 			const data = await res.json();
 			setStdName(data.stdName);
 			setResponse(data.responses);
+			setFb(data.feedback)
 		} catch (error) {
 			console.error("Error fetching response data:", error);
 			notification.error({
@@ -121,6 +123,8 @@ const Admin2 = () => {
 						</p>
 					</div>
 					<Table dataSource={response} columns={columns} pagination={false} />
+					<p className="fb">Feedback</p>
+					<p className="fb-p">{fb}</p>
 				</div>
 			)}
 		</div>
